@@ -1,6 +1,8 @@
-package com.springsecurity.jwt.config;
+package com.springsecurity.jwt.integration;
 
 import com.springsecurity.jwt.api.ApiController;
+import com.springsecurity.jwt.config.SecurityConfig;
+import com.springsecurity.jwt.config.TestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SecurityConfig.class)
 @WebAppConfiguration
-@Import(ApiController.class)
+@Import({ApiController.class, JWTIntegrationTest.class, TestConfig.class})
 class AuthenticationTest {
 
     MockMvc mockMvc;
