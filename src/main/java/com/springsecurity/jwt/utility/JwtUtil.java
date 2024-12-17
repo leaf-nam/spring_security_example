@@ -18,7 +18,7 @@ public class JwtUtil {
                 .parseSignedClaims(token);
     }
 
-    private SecretKey secretKey() {
+    public SecretKey secretKey() {
         // https://randomkeygen.com/
         return Keys.hmacShaKeyFor("+*jhLeu04kw7M~tQew<Ym<d%,\"{(PC$p64acJ}lH_;d:'nD/^s+y7O=j!FBia5b".getBytes(StandardCharsets.UTF_8));
     }
@@ -47,5 +47,4 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload();
     }
-
 }

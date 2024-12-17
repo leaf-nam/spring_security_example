@@ -1,6 +1,7 @@
 package com.springsecurity.jwt.integration;
 
-import com.springsecurity.jwt.config.*;
+import com.springsecurity.jwt.config.IntegrationTestConfig;
+import com.springsecurity.jwt.config.JwtSecurityConfigV2;
 import com.springsecurity.jwt.utility.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,10 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = JwtSecurityConfig.class)
+@ContextConfiguration(classes = JwtSecurityConfigV2.class)
 @WebAppConfiguration
 @Import(IntegrationTestConfig.class)
-public class JWTIntegrationTest {
+public class JWTIntegrationV2Test {
 
     MockMvc mockMvc;
     JwtUtil jwtUtil;
@@ -51,7 +52,7 @@ public class JWTIntegrationTest {
         String password = "badPassword";
 
         // when : 토큰 발급 시도
-        mockMvc.perform(post("/jwt/token")
+        mockMvc.perform(post("/jwt/v2/token")
                         .param("username", id)
                         .param("password", password))
                 .andDo(print())
@@ -64,7 +65,7 @@ public class JWTIntegrationTest {
         password = "badPassword";
 
         // when : 토큰 발급 시도
-        mockMvc.perform(post("/jwt/token")
+        mockMvc.perform(post("/jwt/v2/token")
                         .param("username", id)
                         .param("password", password))
                 .andDo(print())
@@ -81,7 +82,7 @@ public class JWTIntegrationTest {
         String password = "user1234";
 
         // when : 토큰 발급
-        String token = mockMvc.perform(post("/jwt/token")
+        String token = mockMvc.perform(post("/jwt/v2/token")
                         .param("username", id)
                         .param("password", password))
                 .andExpect(status().is(200))
@@ -98,7 +99,7 @@ public class JWTIntegrationTest {
         String badToken = "bearer asdf1234";
 
         // when : User API 접근
-        mockMvc.perform(get("/jwt/user/resources")
+        mockMvc.perform(get("/jwt/v2/user/resources")
                         .header(HttpHeaders.AUTHORIZATION, badToken))
 
                 // then : 401 오류
@@ -111,14 +112,14 @@ public class JWTIntegrationTest {
         // given : User JWT 획득
         String id = "user";
         String password = "user1234";
-        String userToken = mockMvc.perform(post("/jwt/token")
+        String userToken = mockMvc.perform(post("/jwt/v2/token")
                         .param("username", id)
                         .param("password", password))
                 .andExpect(status().is(200))
                 .andReturn().getResponse().getContentAsString();
 
         // when : Admin API 접근
-        mockMvc.perform(get("/jwt/admin/resources")
+        mockMvc.perform(get("/jwt/v2/admin/resources")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken))
 
                 // then : 403(Forbidden) 오류
@@ -131,14 +132,14 @@ public class JWTIntegrationTest {
         // given : Admin JWT 획득
         String id = "admin";
         String password = "admin1234";
-        String adminToken = mockMvc.perform(post("/jwt/token")
+        String adminToken = mockMvc.perform(post("/jwt/v2/token")
                         .param("username", id)
                         .param("password", password))
                 .andExpect(status().is(200))
                 .andReturn().getResponse().getContentAsString();
 
         // when : 권한 없이 PUBLIC API 접근
-        mockMvc.perform(get("/jwt/public/resources")
+        mockMvc.perform(get("/jwt/v2/public/resources")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200))
 
@@ -147,9 +148,10 @@ public class JWTIntegrationTest {
                 .andExpect(content().string("PUBLIC 자원 획득"));
 
         // when : Admin 권한으로 USER API 접근
-        mockMvc.perform(get("/jwt/user/resources")
+        mockMvc.perform(get("/jwt/v2/user/resources")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
 
                 // then : User 자원 획득
                 .andExpect(status().is(200))
@@ -157,7 +159,7 @@ public class JWTIntegrationTest {
                 .andExpect(content().string("USER 자원 획득"));
 
         // when : Admin 권한으로 Admin API 접근
-        mockMvc.perform(get("/jwt/admin/resources")
+        mockMvc.perform(get("/jwt/v2/admin/resources")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON))
 
@@ -165,6 +167,5 @@ public class JWTIntegrationTest {
                 .andExpect(status().is(200))
                 .andExpect(content().encoding(StandardCharsets.UTF_8))
                 .andExpect(content().string("ADMIN 자원 획득"));
-        ;
     }
 }

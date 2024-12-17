@@ -19,6 +19,9 @@ class JwtUtilTest {
     // sub : admin, role : admin 이지만 유효하지 않은 secret key 를 사용한 토큰
     String invalidToken3 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiJ9.wpTc_a19-bJNZ7oeYghAmxks3tk2mjcP6xTqYe2u86c";
 
+    // sub : admin, role : ADMIN, 유효한 secret key 를 사용한 토큰
+    String validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiJ9.VYYrrkyu4kmM4zWtl_gFk9leBM8xu-XxxIYUtY9_2n0";
+
     @BeforeEach
     void init() {
         suit = new JwtUtil();
@@ -38,8 +41,6 @@ class JwtUtilTest {
     @Test
     @DisplayName("2. 유효한 토큰 검증 시 오류가 발생하지 않는다.(Happy Case)")
     void testValidateToken() {
-        // sub : admin, role : ADMIN, 유효한 secret key 를 사용한 토큰
-        String validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiJ9.VYYrrkyu4kmM4zWtl_gFk9leBM8xu-XxxIYUtY9_2n0";
         suit.validate(validToken);
     }
 
